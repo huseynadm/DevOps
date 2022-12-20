@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: app
+data:
+  nginx.conf: |
+    server {
+        listen 80;
+        server_name  localhost;
+        root    /usr/share/nginx/html;
+        error_page 404  /index.html;
+
+
+        location / {
+            try_files $uri $uri/ /index.html;
+        }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontendapp
+  name: frontendapp
+  namespace: afnapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontendapp
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: frontendapp
+    spec:
+      containers:
+      - image: huseynmi9/repo:afnfrontendapp-<CI_COMMIT_SHORT_SHA>
+        name: frontendapp
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 10
+          initialDelaySeconds: 5          
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 20
+          initialDelaySeconds: 20
+        volumeMounts:
+          - mountPath: /etc/nginx/conf.d/
+            readOnly: true
+            name: nginx-conf
+        env:
+        - name: VUE_APP_BACKEND_URL
+          value: http://app.application.local/api/v1/
+        - name: VUE_APP_ACCESS_TOKEN_KEY
+          value: access_token
+        - name: VUE_APP_REFRESH_TOKEN_KEY
+          value: refresh_token
+        - name: VUE_APP_USER_DATA_KEY
+          value: user_data
+      imagePullSecrets:
+      - name: regcred
+
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: nginx-conf
+          items:
+            - key: nginx.conf
+              path: nginx.conf

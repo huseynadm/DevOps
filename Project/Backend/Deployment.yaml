@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backendapp
+  name: backendapp
+  namespace: app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backendapp
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: backendapp
+    spec:
+      containers:
+      - image: huseynmi9/repo:backendapp-<CI_COMMIT_SHORT_SHA>
+        name: backendapp
+        ports:
+        - containerPort: 5001
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ASPNETCORE_URLS
+          value: "http://*:5001"
+      imagePullSecrets:
+      - name: regcred

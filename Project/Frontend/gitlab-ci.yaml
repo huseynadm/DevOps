@@ -1,0 +1,35 @@
+stages:
+  - Build
+  - Deploy
+
+variables:
+   KUBECTL_IMAGE: bitnami/kubectl
+   CI_REGISTRY: https://index.docker.io/v1/
+   CI_REGISTRY_IMAGE: huseynmi9/repo
+   VUE_APP_BACKEND_URL: "http://app.application.local/api/v1/"
+   VUE_APP_ACCESS_TOKEN_KEY: access_token
+   VUE_APP_REFRESH_TOKEN_KEY: refresh_token
+   VUE_APP_USER_DATA_KEY: user_data
+
+
+Build:
+  stage: Build
+  image:
+    name: mgit/base:kaniko-executor-debug-stable
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - cat /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination "$CI_REGISTRY_IMAGE:afnfrontendapp-$CI_COMMIT_SHORT_SHA" --force
+
+Deploy:
+  stage: Deploy
+  image: dtzar/helm-kubectl
+  script:
+  - mkdir -p $HOME/.kube/
+  - touch $HOME/.kube/config
+  - cat $KUBE_CONFIG  > $HOME/.kube/config
+  - export KUBECONFIG=/$HOME/.kube/config
+  - sed -i "s/<CI_COMMIT_SHORT_SHA>/${CI_COMMIT_SHORT_SHA}/g" $CI_PROJECT_DIR/manifests/Deployment.yaml
+  - kubectl apply -f $CI_PROJECT_DIR/manifests/.
