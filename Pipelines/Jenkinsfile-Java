@@ -1,0 +1,28 @@
+#!groovy
+
+node {
+    stage('Checkout') {
+        checkout scm
+    }
+    
+    stage('Build') {
+        sh './mvnw clean install'
+    }
+    
+    stage('Test') {
+        sh './mvnw test'
+    }
+    
+    stage('Publish') {
+        step([$class: 'ArtifactArchiver', artifacts: 'target/*.jar', fingerprint: true])
+        step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+    }
+    
+    stage('Deploy') {
+        if (env.BRANCH_NAME == 'main') {
+            label('on-premises') {
+                sh './deploy.sh'
+            }
+        }
+    }
+}

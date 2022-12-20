@@ -1,0 +1,29 @@
+#!groovy
+
+node {
+    stage('Checkout') {
+        checkout scm
+    }
+    
+    stage('Build') {
+        sh 'npm install'
+        sh 'npm run build'
+    }
+    
+    stage('Test') {
+        sh 'npm test'
+    }
+    
+    stage('Publish') {
+        step([$class: 'ArtifactArchiver', artifacts: 'dist/**/*', fingerprint: true])
+        step([$class: 'JUnitResultArchiver', testResults: '**/test-results.xml'])
+    }
+    
+    stage('Deploy') {
+        if (env.BRANCH_NAME == 'main') {
+            label('on-premises') {
+                sh './deploy.sh'
+            }
+        }
+    }
+}

@@ -1,0 +1,26 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: my-secure-virtual-service
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - my-secure-gateway
+  tls:
+  - match:
+    - uri:
+        prefix: /api
+    route:
+    - destination:
+        host: my-api-service
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: my-service
+        port:
+          number: 80

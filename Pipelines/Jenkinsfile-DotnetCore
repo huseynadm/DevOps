@@ -1,0 +1,30 @@
+#!groovy
+
+node {
+    stage('Checkout') {
+        checkout scm
+    }
+    
+    stage('Build') {
+        sh 'dotnet restore'
+        sh 'dotnet build'
+    }
+    
+    stage('Test') {
+        sh 'dotnet test'
+    }
+    
+    stage('Publish') {
+        sh 'dotnet publish -c Release -o out'
+        step([$class: 'ArtifactArchiver', artifacts: 'out/**/*', fingerprint: true])
+        step([$class: 'XUnitResultArchiver', testResults: '**/test-results.xml'])
+    }
+    
+    stage('Deploy') {
+        if (env.BRANCH_NAME == 'main') {
+            label('on-premises') {
+                sh './deploy.sh'
+            }
+        }
+    }
+}

@@ -1,0 +1,29 @@
+image: mcr.microsoft.com/dotnet/sdk:5.0
+
+stages:
+  - build
+  - test
+  - deploy
+
+cache:
+  paths:
+    - .nuget/
+
+build:
+  stage: build
+  script:
+    - dotnet restore
+    - dotnet build
+
+test:
+  stage: test
+  script:
+    - dotnet test
+
+deploy:
+  stage: deploy
+  script:
+    - dotnet publish -c Release -o out
+  artifacts:
+    paths:
+      - out/
