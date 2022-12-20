@@ -36,7 +36,7 @@ spec:
         app: frontendapp
     spec:
       containers:
-      - image: huseynmi9/repo:afnfrontendapp-<CI_COMMIT_SHORT_SHA>
+      - image: huseynmi9/repo:frontendapp-<CI_COMMIT_SHORT_SHA>
         name: frontendapp
         ports:
         - containerPort: 80
