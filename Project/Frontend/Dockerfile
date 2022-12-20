@@ -1,5 +1,5 @@
 FROM node:lts-alpine3.10 as build-stage
-ENV VUE_APP_BACKEND_URL=http://app.app.local/api/v1/
+ENV VUE_APP_BACKEND_URL=http://app.application.local/api/v1/
 ENV VUE_APP_ACCESS_TOKEN_KEY=access_token
 ENV VUE_APP_REFRESH_TOKEN_KEY=refresh_token
 ENV VUE_APP_USER_DATA_KEY=user_data
