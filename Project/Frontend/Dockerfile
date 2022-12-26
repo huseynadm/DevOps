@@ -14,7 +14,7 @@ RUN mkdir /app
 COPY --from=build-stage /app/dist /usr/share/nginx/html/
 
 
-RUN echo "172.17.78.44		app.application.local" >> /etc/hosts
+RUN echo "<Istio IP ADDR>		app.application.local" >> /etc/hosts
 ENV VUE_APP_BACKEND_URL=http://app.application.local/api/v1/
 ENV VUE_APP_ACCESS_TOKEN_KEY=access_token
 ENV VUE_APP_REFRESH_TOKEN_KEY=refresh_token
