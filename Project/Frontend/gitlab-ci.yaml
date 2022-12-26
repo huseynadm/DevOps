@@ -5,7 +5,7 @@ stages:
 variables:
    KUBECTL_IMAGE: bitnami/kubectl
    CI_REGISTRY: https://index.docker.io/v1/
-   CI_REGISTRY_IMAGE: huseynmi9/repo
+   CI_REGISTRY_IMAGE: example/example
    VUE_APP_BACKEND_URL: "http://app.application.local/api/v1/"
    VUE_APP_ACCESS_TOKEN_KEY: access_token
    VUE_APP_REFRESH_TOKEN_KEY: refresh_token
