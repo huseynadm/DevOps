@@ -17,7 +17,7 @@ spec:
         app: backendapp
     spec:
       containers:
-      - image: huseynmi9/repo:backendapp-<CI_COMMIT_SHORT_SHA>
+      - image: example/example:backendapp-<CI_COMMIT_SHORT_SHA>
         name: backendapp
         ports:
         - containerPort: 5001
