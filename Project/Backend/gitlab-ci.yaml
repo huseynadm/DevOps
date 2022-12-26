@@ -5,7 +5,7 @@ stages:
 variables:
    KUBECTL_IMAGE: bitnami/kubectl
    CI_REGISTRY: https://index.docker.io/v1/
-   CI_REGISTRY_IMAGE: huseynmi9/repo
+   CI_REGISTRY_IMAGE: example/example
    ASPNETCORE_ENVIRONMENT : "Production"
    ASPNETCORE_URLS: "http://*:5001"
 
